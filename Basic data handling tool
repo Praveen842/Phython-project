@@ -1,0 +1,72 @@
+import pandas as pd
+def load_data(file_path):
+    
+    try:
+        data = pd.read_csv(file_path)
+        print(f"Data loaded successfully from {file_path}.")
+        return data
+    except FileNotFoundError:
+        print("Error: File not found. Please check the file path.")
+        return None
+    except pd.errors.EmptyDataError:
+        print("Error: No data found in the file.")
+        return None
+    except pd.errors.ParserError:
+        print("Error: File could not be parsed. Please check the format.")
+        return None
+    except Exception as e:
+     
+   print(f"An unexpected error occurred: {e}")  
+return None
+def calculate_mean(data, column):
+    return data[column].mean()
+
+def calculate_median(data, column):
+    return data[column].median()
+
+def calculate_mode(data, column):
+    return data[column].mode()[0]  
+
+def calculate_std_dev(data, column):
+    return data[column].std()
+
+def calculate_statistics(data):
+    summary = {}
+    numeric_columns = data.select_dtypes(include=['number']).columns
+    for column in numeric_columns:
+ 
+       summary[column] = {
+            'mean': calculate_mean(data, column),
+            'median': calculate_median(data, column),
+            'mode': calculate_mode(data, column),
+            'std_dev': calculate_std_dev(data, column),
+            'count': data[column].count(),
+            'min': data[column].min(),
+            'max': data[column].max(),
+            'range': data[column].max() - data[column].min(),
+            'variance': data[column].var(),
+        }
+    return summary
+
+def print_summary_report(statistics):
+    if not statistics:
+        print("No statistics to report.")
+        return
+    print("\nSummary Statistics:")
+
+    for column, stats in statistics.items():
+        print(f"\nColumn: {column}")
+        for stat_name, value in stats.items():
+            print(f"  {stat_name.capitalize()}: {value}")
+
+def main():
+    file_path = input("Enter the path to your dataset (CSV file): ")
+    data = load_data(file_path)
+    if data is not None:
+        statistics = calculate_statistics(data)
+        print_summary_report(statistics)
+        print("Profiling completed successfully.")
+
+                if __name__ == "__main__":
+                   main()
+
